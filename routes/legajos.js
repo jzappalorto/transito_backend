@@ -2,6 +2,7 @@ const express = require("express");
 const NeDB = require("nedb");
 const path = require("path");
 const router = express.Router();
+const config = require("../config/config");
 
 // Función para cargar la base de datos dinámica según la rama
 const getDatabaseForRama = (rama) => {
@@ -14,9 +15,12 @@ const getDatabaseForRama = (rama) => {
 const isProduction = process.env.NODE_ENV === 'production';
 //const isProduction = false;
   // En producción, usar el volumen persistente (/mnt/data), en desarrollo la ruta local
-  const dbPath = isProduction
-    ? path.join('/app/data', `legajos${rama}.db`)  // Ruta en producción
-    : path.join(__dirname, `../basededatos/legajos${rama}.db`);  // Ruta local en desarrollo
+  
+  const dbPath = path.join(config.dataFolder, `legajos${rama}.db`); // Asigna correctamente el archivo
+
+  //const dbPath = isProduction
+  //  ? path.join('/app/data', `legajos${rama}.db`)  // Ruta en producción
+  //  : path.join(__dirname, `../basededatos/legajos${rama}.db`);  // Ruta local en desarrollo
 
   return new NeDB({
     filename: dbPath,
