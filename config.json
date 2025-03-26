@@ -1,5 +1,5 @@
 {
     "port": 5000,
-    "dataFolder":"./basededatos"
+    "dataFolder":"/app/data"
   }
   
