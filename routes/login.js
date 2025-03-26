@@ -15,4 +15,23 @@ router.post("/", (req, res) => {
   });
 });
 
+// Endpoint para agregar un nuevo usuario hardcodeado
+router.post("/add", (req, res) => {
+  const newUser = {
+    _id: "1",
+    email: "jzappalorto@gmail.com",
+    password: "12345",
+    rama: "Caminantes",
+    admin: true
+  };
+
+  // Guardar el nuevo usuario en la base de datos
+  db.insert(newUser, (err, newDoc) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: "Error al guardar el usuario" });
+    }
+    return res.status(201).json({ success: true, message: "Usuario agregado exitosamente", user: newDoc });
+  });
+});
+
 module.exports = router;
