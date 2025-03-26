@@ -1,0 +1,5 @@
+{
+    "port": 5000,
+    "archivoExcel":"./data/legajos_2025.xlsx"
+  }
+  
