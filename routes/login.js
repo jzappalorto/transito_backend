@@ -34,4 +34,14 @@ router.post("/add", (req, res) => {
   });
 });
 
+// Endpoint para listar todos los usuarios
+router.get("/list", (req, res) => {
+  db.find({}, (err, users) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: "Error al obtener los usuarios" });
+    }
+    return res.json({ success: true, users: users });
+  });
+});
+
 module.exports = router;
