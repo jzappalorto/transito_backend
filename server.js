@@ -4,6 +4,7 @@ const cors = require("cors");
 const config = require("./config/config");
 const loginRoutes = require("./routes/login");
 const legajosRoutes = require("./routes/legajos");
+const backupDataRoutes = require("./routes/backupData");
 
 const app = express();
 app.use(cors());
@@ -12,6 +13,7 @@ app.use(express.json());
 // Rutas
 app.use("/login", loginRoutes);
 app.use("/legajos", legajosRoutes);
+app.use("/backupData", backupDataRoutes);
 
 // Iniciar servidor
 const PORT = config.port || 5000;
