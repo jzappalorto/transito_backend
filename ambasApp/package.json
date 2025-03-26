@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix proyecto_jmz\" \"npm run start --prefix jmz_backend\"",
+    "build-all": "node build.js"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
