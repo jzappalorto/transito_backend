@@ -14,9 +14,9 @@ const getDatabaseForRama = (rama) => {
 //const isProduction = process.env.NODE_ENV === 'production';
 const isProduction = false;
   // En producción, usar el volumen persistente (/mnt/data), en desarrollo la ruta local
-  const dbPath = isProduction
-    ? path.join('/mnt/data', `legajos${rama}.db`)  // Ruta en producción
-    : path.join(__dirname, `../basededatos/legajos${rama}.db`);  // Ruta local en desarrollo
+  //const dbPath = isProduction
+    //? path.join('/mnt/data', `legajos${rama}.db`)  // Ruta en producción
+    path.join(__dirname, `../basededatos/legajos${rama}.db`);  // Ruta local en desarrollo
 
   return new NeDB({
     filename: dbPath,
