@@ -2,8 +2,8 @@ const NeDB = require("nedb");
 const path = require("path");
 
 // Verifica si estamos en producción (Railway)
-//const isProduction = process.env.NODE_ENV === 'production';
-const isProduction = false;
+const isProduction = process.env.NODE_ENV === 'production';
+//const isProduction = false;
 
 // Si estamos en producción, usamos el volumen persistente (/mnt/data)
 const dbPath = isProduction
