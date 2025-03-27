@@ -33,7 +33,8 @@ const legajoFiles = [
   "legajosCastores.db",
   "legajosManada.db",
   "legajosUnidad.db",
-  "legajosRovers.db"
+  "legajosRovers.db",
+  "usuarios.db"
 ];
 
 router.post("/restore", upload.single("backup"), async (req, res) => {
