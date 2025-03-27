@@ -13,6 +13,21 @@ const dataFolder = path.resolve(config.dataFolder); // Ruta desde config.json
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+// Función para eliminar archivos en una carpeta
+const deleteFilesInDirectory = (directoryPath) => {
+  try {
+    const files = fs.readdirSync(directoryPath);
+    files.forEach((file) => {
+      const filePath = path.join(directoryPath, file);
+      if (fs.lstatSync(filePath).isFile()) {
+        fs.unlinkSync(filePath); // Eliminar archivo
+      }
+    });
+  } catch (err) {
+    console.error("Error al eliminar archivos:", err);
+  }
+};
+
 router.post("/restore", upload.single("backup"), async (req, res) => {
   if (!req.file) {
     return res.status(400).send("No se subió ningún archivo.");
@@ -21,6 +36,9 @@ router.post("/restore", upload.single("backup"), async (req, res) => {
   try {
     console.log("Restaurando backup...");
 
+    // Eliminar archivos existentes en la carpeta de datos
+    deleteFilesInDirectory(dataFolder);
+    
     // Escribir el buffer del archivo ZIP en un stream para descomprimirlo
     const bufferStream = require("stream").Readable.from(req.file.buffer);
 
