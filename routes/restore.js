@@ -42,7 +42,7 @@ router.post("/restore", upload.single("backup"), async (req, res) => {
   }
 
   try {
-    console.log("Restaurando backup...");
+    console.log("Restaurando backup......");
 
     // Eliminar archivos existentes en la carpeta de datos
     deleteFilesInDirectory(dataFolder);
