@@ -3,7 +3,7 @@ const multer = require("multer");
 const unzipper = require("unzipper");
 const path = require("path");
 const fs = require("fs");
-const config = require("../config"); // Importamos la configuración
+const config = require("../config");
 
 const router = express.Router();
 const dataFolder = path.resolve(config.dataFolder); // Ruta desde config.json
@@ -57,20 +57,28 @@ router.post("/restore", upload.single("backup"), async (req, res) => {
         const fileName = entry.path;
         const fileType = entry.type; // 'File' o 'Directory'
 
-        if (fileType === 'File') {
-          // Si el archivo es uno de los archivos de legajos esperados, lo restauramos con el nombre literal
-          if (legajoFiles.includes(fileName)) {
-            const filePath = path.join(dataFolder, fileName);
-            entry.pipe(fs.createWriteStream(filePath));
-            console.log(`Restaurando archivo: ${fileName}`);
+        // Eliminar la carpeta "backup" si es el primer nivel en el archivo
+        if (fileName.startsWith("backup/")) {
+          const cleanFileName = fileName.replace("backup/", ""); // Eliminar "backup/" del nombre
+
+          if (fileType === 'File') {
+            // Si el archivo es uno de los archivos de legajos esperados, lo restauramos con el nombre literal
+            if (legajoFiles.includes(cleanFileName)) {
+              const filePath = path.join(dataFolder, cleanFileName);
+              entry.pipe(fs.createWriteStream(filePath));
+              console.log(`Restaurando archivo: ${cleanFileName}`);
+            } else {
+              console.log(`Archivo no esperado: ${cleanFileName}, se ignora.`);
+              entry.autodrain(); // Drenamos el archivo si no es uno de los legajos
+            }
           } else {
-            console.log(`Archivo no esperado: ${fileName}, se ignora.`);
-            entry.autodrain(); // Drenamos el archivo si no es uno de los legajos
+            // Si es un directorio, lo ignoramos o lo puedes crear si es necesario
+            console.log(`Ignorando directorio: ${fileName}`);
+            entry.autodrain(); // Solo drenar el contenido si es un directorio
           }
         } else {
-          // Si es un directorio, lo ignoramos o lo puedes crear si es necesario
-          console.log(`Ignorando directorio: ${fileName}`);
-          entry.autodrain(); // Solo drenar el contenido si es un directorio
+          console.log(`Ignorando archivo o directorio fuera de la carpeta 'backup': ${fileName}`);
+          entry.autodrain(); // Drenar el contenido si no está dentro de la carpeta 'backup'
         }
       })
       .on("close", () => {
