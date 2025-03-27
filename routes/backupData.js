@@ -29,9 +29,4 @@ router.get("/backup", (req, res) => {
   archive.finalize(); // Finalizar la creación del ZIP
 });
 
-router.post("/restore", (req, res) => {
-  res.send("Solicitud POST recibida correctamente.");
-});
-
-
 module.exports = router;
