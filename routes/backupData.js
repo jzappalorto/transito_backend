@@ -29,33 +29,9 @@ router.get("/backup", (req, res) => {
   archive.finalize(); // Finalizar la creación del ZIP
 });
 
-router.post("/restore", upload.single("backup"), async (req, res) => {
-  if (!req.file) {
-    return res.status(400).send("No se subió ningún archivo.");
-  }
-
-  try {
-    console.log("Restaurando backup...");
-
-    // Escribir el buffer del archivo ZIP en un stream para descomprimirlo
-    const bufferStream = require("stream").Readable.from(req.file.buffer);
-
-    // Extraer el ZIP en la carpeta de datos
-    bufferStream
-      .pipe(unzipper.Extract({ path: dataFolder }))
-      .on("close", () => {
-        console.log("Backup restaurado correctamente.");
-        res.send("Backup restaurado correctamente.");
-      })
-      .on("error", (err) => {
-        console.error("Error al restaurar el backup:", err);
-        res.status(500).send("Error al restaurar el backup.");
-      });
-
-  } catch (err) {
-    console.error("Error en el proceso de restauración:", err);
-    res.status(500).send("Error en el proceso de restauración.");
-  }
+router.post("/restore", (req, res) => {
+  res.send("Solicitud POST recibida correctamente.");
 });
+
 
 module.exports = router;
