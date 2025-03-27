@@ -1,5 +1,4 @@
 const express = require("express");
-const archiver = require("archiver");
 const multer = require("multer");
 const unzipper = require("unzipper");
 const path = require("path");
@@ -28,6 +27,15 @@ const deleteFilesInDirectory = (directoryPath) => {
   }
 };
 
+// Nombres literales de los archivos de legajos
+const legajoFiles = [
+  "legajosCaminantes.db",
+  "legajosCastores.db",
+  "legajosManada.db",
+  "legajosUnidad.db",
+  "legajosRovers.db"
+];
+
 router.post("/restore", upload.single("backup"), async (req, res) => {
   if (!req.file) {
     return res.status(400).send("No se subió ningún archivo.");
@@ -38,13 +46,33 @@ router.post("/restore", upload.single("backup"), async (req, res) => {
 
     // Eliminar archivos existentes en la carpeta de datos
     deleteFilesInDirectory(dataFolder);
-    
-    // Escribir el buffer del archivo ZIP en un stream para descomprimirlo
+
+    // Crear un flujo de lectura para el archivo ZIP subido
     const bufferStream = require("stream").Readable.from(req.file.buffer);
 
-    // Extraer el ZIP en la carpeta de datos
+    // Usar unzipper para procesar el archivo ZIP
     bufferStream
-      .pipe(unzipper.Extract({ path: dataFolder }))
+      .pipe(unzipper.Parse())
+      .on("entry", (entry) => {
+        const fileName = entry.path;
+        const fileType = entry.type; // 'File' o 'Directory'
+
+        if (fileType === 'File') {
+          // Si el archivo es uno de los archivos de legajos esperados, lo restauramos con el nombre literal
+          if (legajoFiles.includes(fileName)) {
+            const filePath = path.join(dataFolder, fileName);
+            entry.pipe(fs.createWriteStream(filePath));
+            console.log(`Restaurando archivo: ${fileName}`);
+          } else {
+            console.log(`Archivo no esperado: ${fileName}, se ignora.`);
+            entry.autodrain(); // Drenamos el archivo si no es uno de los legajos
+          }
+        } else {
+          // Si es un directorio, lo ignoramos o lo puedes crear si es necesario
+          console.log(`Ignorando directorio: ${fileName}`);
+          entry.autodrain(); // Solo drenar el contenido si es un directorio
+        }
+      })
       .on("close", () => {
         console.log("Backup restaurado correctamente.");
         res.send("Backup restaurado correctamente.");
