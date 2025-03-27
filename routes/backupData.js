@@ -13,9 +13,6 @@ const dataFolder = path.resolve(config.dataFolder); // Ruta desde config.json
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-/**
- * 📌 Endpoint: Backup (descarga un ZIP con todos los archivos de la carpeta de datos)
- */
 router.get("/backup", (req, res) => {
   res.setHeader("Content-Disposition", 'attachment; filename="backup.zip"');
   res.setHeader("Content-Type", "application/zip");
@@ -32,9 +29,6 @@ router.get("/backup", (req, res) => {
   archive.finalize(); // Finalizar la creación del ZIP
 });
 
-/**
- * 📌 Endpoint: Restore (subir un ZIP y restaurar la carpeta de datos)
- */
 router.post("/restore", upload.single("backup"), async (req, res) => {
   if (!req.file) {
     return res.status(400).send("No se subió ningún archivo.");
